@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rankings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+    }
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .nav-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 20px 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s ease;
+    }
+    .nav-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateX(8px);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .nav-icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .nav-icon.journals {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+    .nav-icon.world {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    }
+    .nav-icon.korea {
+      background: linear-gradient(135deg, #ec4899, #f472b6);
+    }
+    .nav-info {
+      flex: 1;
+    }
+    .nav-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .nav-desc {
+      font-size: 0.85rem;
+      color: #888;
+    }
+    .nav-arrow {
+      font-size: 1.2rem;
+      color: #666;
+      transition: transform 0.3s ease;
+    }
+    .nav-card:hover .nav-arrow {
+      transform: translateX(4px);
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Rankings</h1>
+    <p class="subtitle">University and Journal Rankings Comparison</p>
+    
+    <nav class="nav-list">
+      <a href="journals.html" class="nav-card">
+        <div class="nav-icon journals">📄</div>
+        <div class="nav-info">
+          <div class="nav-title">Journals</div>
+          <div class="nav-desc">Academic journal rankings</div>
+        </div>
+        <div class="nav-arrow">-></div>
+      </a>
+      
+      <a href="world_uni.html" class="nav-card">
+        <div class="nav-icon world">🌍</div>
+        <div class="nav-info">
+          <div class="nav-title">World Universities</div>
+          <div class="nav-desc">Global university rankings comparison</div>
+        </div>
+        <div class="nav-arrow">-></div>
+      </a>
+      
+      <a href="korea_uni.html" class="nav-card">
+        <div class="nav-icon korea">🇰🇷</div>
+        <div class="nav-info">
+          <div class="nav-title">Korea Universities</div>
+          <div class="nav-desc">South Korea university rankings comparison</div>
+        </div>
+        <div class="nav-arrow">-></div>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>
