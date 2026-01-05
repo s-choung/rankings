@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JCR 2025 Journal Metrics | Catalysis, Materials, Chemistry, Energy, AI4Mat & Chemical Engineering</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0c10;
+            --bg-secondary: #12151c;
+            --bg-tertiary: #1a1e28;
+            --bg-card: #161a23;
+            --accent-gold: #d4a853;
+            --accent-emerald: #34d399;
+            --accent-blue: #60a5fa;
+            --accent-rose: #f472b6;
+            --accent-amber: #fbbf24;
+            --accent-orange: #fb923c;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2a3142;
+            --q1-color: #22c55e;
+            --q2-color: #eab308;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(52, 211, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(96, 165, 250, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 36px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.15), rgba(212, 168, 83, 0.05));
+            border: 1px solid rgba(212, 168, 83, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .header-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+        }
+
+        .search-box::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+            background-size: contain;
+        }
+
+        .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .filter-btn {
+            padding: 10px 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.2), rgba(212, 168, 83, 0.1));
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .sort-select {
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .sort-select:focus { outline: none; border-color: var(--accent-gold); }
+
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-scroll { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+
+        thead {
+            background: var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: rgba(212, 168, 83, 0.03); }
+
+        .journal-name { font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+
+        .journal-abbr {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .publisher { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .impact-factor {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--accent-gold);
+        }
+
+        .category-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+        .category-tag {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .tag-catalysis { background: rgba(244, 114, 182, 0.15); color: var(--accent-rose); }
+        .tag-materials { background: rgba(96, 165, 250, 0.15); color: var(--accent-blue); }
+        .tag-chemistry { background: rgba(52, 211, 153, 0.15); color: var(--accent-emerald); }
+        .tag-engineering { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); }
+        .tag-energy { background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); }
+        .tag-ai4mat { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+
+        .issn { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-muted); }
+
+        .estimated-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px;
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: help;
+        }
+
+        .estimated-marker {
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-left: 2px;
+        }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a { color: var(--accent-gold); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        footer p { margin-bottom: 8px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+
+        @media (max-width: 768px) {
+            .controls { flex-direction: column; }
+            .search-box { width: 100%; }
+            .filter-group { width: 100%; justify-content: flex-start; }
+            .sort-select { width: 100%; }
+            th, td { padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="container">
+        <header>
+            <div class="header-badge">JCR 2025 Data Release</div>
+            <h1>Journal Citation Reports</h1>
+            <p class="subtitle">Impact Factor rankings for leading journals in Catalysis, Materials Science, Chemistry, Energy, AI4Mat, and Chemical Engineering</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by journal name, publisher, or ISSN...">
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All Fields</button>
+                <button class="filter-btn" data-filter="catalysis">Catalysis</button>
+                <button class="filter-btn" data-filter="materials">Materials</button>
+                <button class="filter-btn" data-filter="chemistry">Chemistry</button>
+                <button class="filter-btn" data-filter="energy">Energy</button>
+                <button class="filter-btn" data-filter="ai4mat">AI4Mat</button>
+                <button class="filter-btn" data-filter="engineering">Chem. Eng.</button>
+            </div>
+            <select class="sort-select" id="sortSelect">
+                <option value="if-desc">IF: High to Low</option>
+                <option value="if-asc">IF: Low to High</option>
+                <option value="name-asc">Name: A to Z</option>
+                <option value="name-desc">Name: Z to A</option>
+            </select>
+        </div>
+
+        <div class="table-wrapper fade-in">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Journal Name</th>
+                            <th>Publisher</th>
+                            <th>Impact Factor</th>
+                            <th>JCR Categories</th>
+                            <th>ISSN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="journalTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>Data compiled from Clarivate Journal Citation Reports (JCR) 2025 release based on 2024 citation data.</p>
+            <p>Impact Factor values verified via wos-journal.info. Always verify with official <a href="https://jcr.clarivate.com/" target="_blank">JCR</a> for the most current data.</p>
+            <p style="color: #f59e0b; margin-top: 12px;">* Estimated IF: New journals without official JCR data. Estimates based on citation metrics and comparable journal performance.</p>
+        </footer>
+    </div>
+
+    <script>
+        const journals = [
+            { name: "Nature Energy", abbr: "NAT ENERGY", publisher: "Springer Nature", impactFactor: 60.1, categories: ["materials", "energy"], issn: "2058-7546" },
+            { name: "Chemical Reviews", abbr: "CHEM REV", publisher: "American Chemical Society", impactFactor: 55.8, categories: ["chemistry"], issn: "0009-2665" },
+            { name: "Nature", abbr: "NATURE", publisher: "Springer Nature", impactFactor: 48.5, categories: ["chemistry", "materials"], issn: "0028-0836" },
+            { name: "Nature Catalysis", abbr: "NAT CATAL", publisher: "Springer Nature", impactFactor: 44.6, categories: ["catalysis", "chemistry"], issn: "2520-1158" },
+            { name: "Chemical Society Reviews", abbr: "CHEM SOC REV", publisher: "Royal Society of Chemistry", impactFactor: 39.0, categories: ["chemistry"], issn: "0306-0012" },
+            { name: "Nature Materials", abbr: "NAT MATER", publisher: "Springer Nature", impactFactor: 38.5, categories: ["materials"], issn: "1476-1122" },
+            { name: "Joule", abbr: "JOULE", publisher: "Cell Press", impactFactor: 35.4, categories: ["energy", "materials"], issn: "2542-4351" },
+            { name: "Nano-Micro Letters", abbr: "NANO-MICRO LETT", publisher: "Springer Nature", impactFactor: 31.6, categories: ["materials", "energy"], issn: "2150-5551" },
+            { name: "Energy & Environmental Science", abbr: "ENERG ENVIRON SCI", publisher: "Royal Society of Chemistry", impactFactor: 30.8, categories: ["chemistry", "energy", "engineering"], issn: "1754-5692" },
+            { name: "Advanced Materials", abbr: "ADV MATER", publisher: "Wiley-VCH", impactFactor: 26.8, categories: ["materials", "chemistry"], issn: "0935-9648" },
+            { name: "Advanced Energy Materials", abbr: "ADV ENERGY MATER", publisher: "Wiley-VCH", impactFactor: 26.0, categories: ["materials", "energy"], issn: "1614-6840" },
+            { name: "Applied Catalysis B: Environment and Energy", abbr: "APPL CATAL B-ENVIRON", publisher: "Elsevier", impactFactor: 21.1, categories: ["catalysis", "energy", "engineering"], issn: "0926-3373" },
+            { name: "Advanced Functional Materials", abbr: "ADV FUNCT MATER", publisher: "Wiley-VCH", impactFactor: 19.0, categories: ["materials", "chemistry"], issn: "1616-301X" },
+            { name: "Nature Machine Intelligence", abbr: "NAT MACH INTELL", publisher: "Springer Nature", impactFactor: 23.9, categories: ["ai4mat"], issn: "2522-5839" },
+            { name: "Nature Computational Science", abbr: "NAT COMPUT SCI", publisher: "Springer Nature", impactFactor: 18.3, categories: ["ai4mat", "chemistry"], issn: "2662-8457" },
+            { name: "ACS Energy Letters", abbr: "ACS ENERGY LETT", publisher: "American Chemical Society", impactFactor: 18.2, categories: ["energy", "chemistry"], issn: "2380-8195" },
+            { name: "Chem", abbr: "CHEM", publisher: "Cell Press", impactFactor: 18.0, categories: ["chemistry"], issn: "2451-9294" },
+            { name: "Accounts of Chemical Research", abbr: "ACCOUNTS CHEM RES", publisher: "American Chemical Society", impactFactor: 17.7, categories: ["chemistry"], issn: "0001-4842" },
+            { name: "Chinese Journal of Catalysis", abbr: "CHINESE J CATAL", publisher: "Science Press", impactFactor: 17.7, categories: ["catalysis", "chemistry"], issn: "0253-9837" },
+            { name: "Nano Energy", abbr: "NANO ENERGY", publisher: "Elsevier", impactFactor: 17.1, categories: ["materials", "energy"], issn: "2211-2855" },
+            { name: "Angewandte Chemie International Edition", abbr: "ANGEW CHEM INT ED", publisher: "Wiley-VCH", impactFactor: 17.0, categories: ["chemistry", "catalysis"], issn: "1433-7851" },
+            { name: "ACS Nano", abbr: "ACS NANO", publisher: "American Chemical Society", impactFactor: 16.0, categories: ["materials", "chemistry"], issn: "1936-0851" },
+            { name: "Nature Communications", abbr: "NAT COMMUN", publisher: "Springer Nature", impactFactor: 15.7, categories: ["chemistry", "materials"], issn: "2041-1723" },
+            { name: "Journal of the American Chemical Society", abbr: "J AM CHEM SOC", publisher: "American Chemical Society", impactFactor: 15.6, categories: ["chemistry", "catalysis"], issn: "0002-7863" },
+            { name: "Nature Chemical Engineering", abbr: "NAT CHEM ENG", publisher: "Springer Nature", impactFactor: 15.0, categories: ["engineering", "chemistry"], issn: "2948-1198", estimated: true },
+            { name: "Energy & Environmental Materials", abbr: "ENERGY ENVIRON MATER", publisher: "Wiley", impactFactor: 14.1, categories: ["materials", "energy"], issn: "2575-0356" },
+            { name: "Small", abbr: "SMALL", publisher: "Wiley-VCH", impactFactor: 13.3, categories: ["materials", "chemistry"], issn: "1613-6810" },
+            { name: "Chemical Engineering Journal", abbr: "CHEM ENG J", publisher: "Elsevier", impactFactor: 13.2, categories: ["engineering", "chemistry"], issn: "1385-8947" },
+            { name: "ACS Catalysis", abbr: "ACS CATAL", publisher: "American Chemical Society", impactFactor: 13.1, categories: ["catalysis", "chemistry"], issn: "2155-5435" },
+            { name: "Science Advances", abbr: "SCI ADV", publisher: "AAAS", impactFactor: 12.5, categories: ["chemistry", "materials"], issn: "2375-2548" },
+            { name: "npj Computational Materials", abbr: "NPJ COMPUT MATER", publisher: "Springer Nature", impactFactor: 11.9, categories: ["materials", "ai4mat"], issn: "2057-3960" },
+            { name: "Materials Horizons", abbr: "MATER HORIZ", publisher: "Royal Society of Chemistry", impactFactor: 10.7, categories: ["materials", "chemistry"], issn: "2051-6347" },
+            { name: "Carbon Energy", abbr: "CARBON ENERGY", publisher: "Wiley", impactFactor: 10.0, categories: ["energy", "materials"], issn: "2637-9368" },
+            { name: "Journal of Materials Chemistry A", abbr: "J MATER CHEM A", publisher: "Royal Society of Chemistry", impactFactor: 9.5, categories: ["materials", "chemistry", "energy"], issn: "2050-7488" },
+            { name: "Green Chemistry", abbr: "GREEN CHEM", publisher: "Royal Society of Chemistry", impactFactor: 9.3, categories: ["chemistry", "engineering"], issn: "1463-9262" },
+            { name: "Small Methods", abbr: "SMALL METHODS", publisher: "Wiley-VCH", impactFactor: 9.1, categories: ["materials", "chemistry"], issn: "2366-9608" },
+            { name: "International Journal of Hydrogen Energy", abbr: "INT J HYDROGEN ENERG", publisher: "Elsevier", impactFactor: 8.3, categories: ["energy", "engineering"], issn: "0360-3199" },
+            { name: "ACS Applied Materials & Interfaces", abbr: "ACS APPL MATER INTER", publisher: "American Chemical Society", impactFactor: 8.2, categories: ["materials", "chemistry"], issn: "1944-8244" },
+            { name: "Acta Materialia", abbr: "ACTA MATER", publisher: "Elsevier", impactFactor: 8.0, categories: ["materials"], issn: "1359-6454" },
+            { name: "Cell Reports Physical Science", abbr: "CELL REP PHYS SCI", publisher: "Cell Press", impactFactor: 7.3, categories: ["chemistry", "materials", "energy", "ai4mat"], issn: "2666-3864" },
+            { name: "Journal of Catalysis", abbr: "J CATAL", publisher: "Elsevier", impactFactor: 7.3, categories: ["catalysis", "chemistry"], issn: "0021-9517" },
+            { name: "Journal of Environmental Chemical Engineering", abbr: "J ENVIRON CHEM ENG", publisher: "Elsevier", impactFactor: 7.2, categories: ["engineering", "chemistry"], issn: "2213-3437" },
+            { name: "ACS Sustainable Chemistry & Engineering", abbr: "ACS SUSTAIN CHEM ENG", publisher: "American Chemical Society", impactFactor: 7.1, categories: ["chemistry", "engineering"], issn: "2168-0485" },
+            { name: "ChemSusChem", abbr: "CHEMSUSCHEM", publisher: "Wiley-VCH", impactFactor: 6.6, categories: ["chemistry", "energy"], issn: "1864-5631" },
+            { name: "Reviews in Chemical Engineering", abbr: "REV CHEM ENG", publisher: "De Gruyter", impactFactor: 6.6, categories: ["engineering"], issn: "0167-8299" },
+            { name: "Advanced Intelligent Systems", abbr: "ADV INTELL SYST", publisher: "Wiley", impactFactor: 6.1, categories: ["ai4mat", "materials"], issn: "2640-4567" },
+            { name: "Digital Discovery", abbr: "DIGIT DISCOV", publisher: "Royal Society of Chemistry", impactFactor: 5.6, categories: ["chemistry", "ai4mat"], issn: "2635-098X" },
+            { name: "Journal of Chemical Theory and Computation", abbr: "J CHEM THEORY COMPUT", publisher: "American Chemical Society", impactFactor: 5.5, categories: ["chemistry", "ai4mat"], issn: "1549-9618" },
+            { name: "ACS Applied Energy Materials", abbr: "ACS APPL ENERG MATER", publisher: "American Chemical Society", impactFactor: 5.5, categories: ["energy", "materials"], issn: "2574-0962" },
+            { name: "Catalysis Today", abbr: "CATAL TODAY", publisher: "Elsevier", impactFactor: 5.3, categories: ["catalysis", "chemistry"], issn: "0920-5861" },
+            { name: "Journal of Chemical Information and Modeling", abbr: "J CHEM INF MODEL", publisher: "American Chemical Society", impactFactor: 5.3, categories: ["chemistry", "ai4mat"], issn: "1549-9596" },
+            { name: "Exploration", abbr: "EXPLORATION", publisher: "Wiley", impactFactor: 5.0, categories: ["materials", "chemistry"], issn: "2766-2098" },
+            { name: "Applied Catalysis A: General", abbr: "APPL CATAL A-GEN", publisher: "Elsevier", impactFactor: 4.7, categories: ["catalysis", "chemistry"], issn: "0926-860X" },
+            { name: "Machine Learning: Science and Technology", abbr: "MACH LEARN SCI TECHNOL", publisher: "IOP Publishing", impactFactor: 4.6, categories: ["ai4mat"], issn: "2632-2153" },
+            { name: "Catalysis Science & Technology", abbr: "CATAL SCI TECHNOL", publisher: "Royal Society of Chemistry", impactFactor: 4.4, categories: ["catalysis"], issn: "2044-4753" },
+            { name: "Chemical Engineering Science", abbr: "CHEM ENG SCI", publisher: "Elsevier", impactFactor: 4.1, categories: ["engineering"], issn: "0009-2509" },
+            { name: "ChemCatChem", abbr: "CHEMCATCHEM", publisher: "Wiley-VCH", impactFactor: 4.0, categories: ["catalysis", "chemistry"], issn: "1867-3880" },
+            { name: "Molecular Catalysis", abbr: "MOL CATAL", publisher: "Elsevier", impactFactor: 4.0, categories: ["catalysis", "chemistry"], issn: "2468-8231" },
+            { name: "Industrial & Engineering Chemistry Research", abbr: "IND ENG CHEM RES", publisher: "American Chemical Society", impactFactor: 3.8, categories: ["engineering", "chemistry"], issn: "0888-5885" },
+            { name: "Reaction Chemistry & Engineering", abbr: "REACT CHEM ENG", publisher: "Royal Society of Chemistry", impactFactor: 3.8, categories: ["engineering", "chemistry"], issn: "2058-9883" },
+            { name: "AIChE Journal", abbr: "AICHE J", publisher: "Wiley", impactFactor: 3.7, categories: ["engineering"], issn: "0001-1541" },
+            { name: "Physical Chemistry Chemical Physics", abbr: "PHYS CHEM CHEM PHYS", publisher: "Royal Society of Chemistry", impactFactor: 3.5, categories: ["chemistry"], issn: "1463-9076" },
+            { name: "Journal of Physical Chemistry C", abbr: "J PHYS CHEM C", publisher: "American Chemical Society", impactFactor: 3.3, categories: ["chemistry", "materials"], issn: "1932-7447" },
+            { name: "Computational Materials Science", abbr: "COMPUT MATER SCI", publisher: "Elsevier", impactFactor: 3.3, categories: ["materials", "ai4mat"], issn: "0927-0256" },
+            { name: "Korean Journal of Chemical Engineering", abbr: "KOREAN J CHEM ENG", publisher: "Springer Nature", impactFactor: 3.0, categories: ["engineering", "chemistry"], issn: "0256-1115" }
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const tableBody = document.getElementById('journalTableBody');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        let currentFilter = 'all';
+        let currentSort = 'if-desc';
+
+        function init() { renderTable(); setupEventListeners(); }
+
+        function setupEventListeners() {
+            searchInput.addEventListener('input', debounce(renderTable, 200));
+            sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; renderTable(); });
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderTable();
+                });
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => { clearTimeout(timeout); func(...args); };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function filterJournals(data) {
+            const searchTerm = searchInput.value.toLowerCase();
+            return data.filter(journal => {
+                const matchesSearch = !searchTerm || 
+                    journal.name.toLowerCase().includes(searchTerm) ||
+                    journal.abbr.toLowerCase().includes(searchTerm) ||
+                    journal.publisher.toLowerCase().includes(searchTerm) ||
+                    journal.issn.includes(searchTerm);
+                const matchesCategory = currentFilter === 'all' || journal.categories.includes(currentFilter);
+                return matchesSearch && matchesCategory;
+            });
+        }
+
+        function sortJournals(data) {
+            const sorted = [...data];
+            switch(currentSort) {
+                case 'if-desc': sorted.sort((a, b) => b.impactFactor - a.impactFactor); break;
+                case 'if-asc': sorted.sort((a, b) => a.impactFactor - b.impactFactor); break;
+                case 'name-asc': sorted.sort((a, b) => a.name.localeCompare(b.name)); break;
+                case 'name-desc': sorted.sort((a, b) => b.name.localeCompare(a.name)); break;
+            }
+            return sorted;
+        }
+
+        function renderTable() {
+            const filtered = filterJournals(journals);
+            const sorted = sortJournals(filtered);
+            if (sorted.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="empty-state"><p>No journals found matching your criteria.</p></td></tr>';
+                return;
+            }
+            tableBody.innerHTML = sorted.map((journal, index) => `
+                <tr class="fade-in" style="animation-delay: ${index * 0.02}s">
+                    <td><div class="journal-name">${journal.name}${journal.estimated ? '<span class="estimated-badge" title="Estimated IF - new journal without official JCR data">*</span>' : ''}</div><div class="journal-abbr">${journal.abbr}</div></td>
+                    <td class="publisher">${journal.publisher}</td>
+                    <td class="impact-factor">${journal.impactFactor.toFixed(1)}${journal.estimated ? '<span class="estimated-marker">*</span>' : ''}</td>
+                    <td><div class="category-tags">${journal.categories.map(cat => `<span class="category-tag tag-${cat}">${cat}</span>`).join('')}</div></td>
+                    <td class="issn">${journal.issn}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
