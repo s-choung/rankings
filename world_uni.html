@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World University Rankings 2026 - Latest Data</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .title-font { font-family: 'Space Grotesk', sans-serif; }
+    .university-card {
+      transition: all 0.15s ease;
+      height: 36px;
+      display: flex;
+      align-items: center;
+    }
+    .university-card:hover { background: rgba(100, 116, 139, 0.3) !important; }
+    .university-card.highlighted {
+      background: rgba(59, 130, 246, 0.3) !important;
+      border-color: rgba(59, 130, 246, 0.6) !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useMemo, useRef, useEffect, useCallback } = React;
+
+    const FLAGS = {
+      US: "\u{1F1FA}\u{1F1F8}", GB: "\u{1F1EC}\u{1F1E7}", CH: "\u{1F1E8}\u{1F1ED}",
+      CN: "\u{1F1E8}\u{1F1F3}", SG: "\u{1F1F8}\u{1F1EC}", CA: "\u{1F1E8}\u{1F1E6}",
+      AU: "\u{1F1E6}\u{1F1FA}", JP: "\u{1F1EF}\u{1F1F5}", DE: "\u{1F1E9}\u{1F1EA}",
+      FR: "\u{1F1EB}\u{1F1F7}", NL: "\u{1F1F3}\u{1F1F1}", SE: "\u{1F1F8}\u{1F1EA}",
+      HK: "\u{1F1ED}\u{1F1F0}", KR: "\u{1F1F0}\u{1F1F7}", DK: "\u{1F1E9}\u{1F1F0}",
+    };
+
+    // LATEST DATA - January 2026
+    // Sources: QS 2026, THE 2026, ARWU 2025
+    const RANKINGS_DATA = {
+      "2026": {
+        "overall": {
+          // QS World University Rankings 2026 - Published June 2025
+          "QS": [
+            { rank: 1, name: "MIT", country: "US" },
+            { rank: 2, name: "Imperial College London", country: "GB" },
+            { rank: 3, name: "University of Oxford", country: "GB" },
+            { rank: 4, name: "Harvard University", country: "US" },
+            { rank: 5, name: "University of Cambridge", country: "GB" },
+            { rank: 6, name: "Stanford University", country: "US" },
+            { rank: 7, name: "ETH Zurich", country: "CH" },
+            { rank: 8, name: "NUS", country: "SG" },
+            { rank: 9, name: "UCL", country: "GB" },
+            { rank: 10, name: "Caltech", country: "US" },
+            { rank: 11, name: "U of Pennsylvania", country: "US" },
+            { rank: 12, name: "UC Berkeley", country: "US" },
+            { rank: 13, name: "U of Melbourne", country: "AU" },
+            { rank: 14, name: "Peking University", country: "CN" },
+            { rank: 15, name: "NTU Singapore", country: "SG" },
+            { rank: 16, name: "Cornell University", country: "US" },
+            { rank: 17, name: "U of Hong Kong", country: "HK" },
+            { rank: 18, name: "U of Sydney", country: "AU" },
+            { rank: 19, name: "UNSW Sydney", country: "AU" },
+            { rank: 20, name: "Tsinghua University", country: "CN" },
+            { rank: 21, name: "U of Chicago", country: "US" },
+            { rank: 22, name: "Princeton University", country: "US" },
+            { rank: 23, name: "Yale University", country: "US" },
+            { rank: 24, name: "U of Toronto", country: "CA" },
+            { rank: 25, name: "EPFL", country: "CH" },
+            { rank: 26, name: "Universite PSL", country: "FR" },
+            { rank: 27, name: "TU Munich", country: "DE" },
+            { rank: 28, name: "McGill University", country: "CA" },
+            { rank: 29, name: "Duke University", country: "US" },
+            { rank: 30, name: "Fudan University", country: "CN" },
+            { rank: 31, name: "King's College London", country: "GB" },
+            { rank: 32, name: "Australian Nat U", country: "AU" },
+            { rank: 32, name: "Chinese U of HK", country: "HK" },
+            { rank: 34, name: "U of Edinburgh", country: "GB" },
+            { rank: 35, name: "U of Manchester", country: "GB" },
+            { rank: 36, name: "Monash University", country: "AU" },
+            { rank: 36, name: "U of Tokyo", country: "JP" },
+            { rank: 38, name: "Columbia University", country: "US" },
+            { rank: 38, name: "Seoul Nat University", country: "KR" },
+            { rank: 40, name: "U of British Columbia", country: "CA" },
+            { rank: 41, name: "IP Paris", country: "FR" },
+            { rank: 42, name: "Northwestern U", country: "US" },
+            { rank: 42, name: "U of Queensland", country: "AU" },
+            { rank: 44, name: "HKUST", country: "HK" },
+            { rank: 45, name: "U of Michigan", country: "US" },
+            { rank: 46, name: "UCLA", country: "US" },
+            { rank: 47, name: "Delft University", country: "NL" },
+            { rank: 47, name: "Shanghai Jiao Tong U", country: "CN" },
+            { rank: 49, name: "Zhejiang University", country: "CN" },
+            { rank: 50, name: "Yonsei University", country: "KR" },
+          ],
+          // THE World University Rankings 2026 - Published October 2025
+          "THE": [
+            { rank: 1, name: "University of Oxford", country: "GB" },
+            { rank: 2, name: "MIT", country: "US" },
+            { rank: 3, name: "Princeton University", country: "US" },
+            { rank: 3, name: "University of Cambridge", country: "GB" },
+            { rank: 5, name: "Harvard University", country: "US" },
+            { rank: 5, name: "Stanford University", country: "US" },
+            { rank: 7, name: "Caltech", country: "US" },
+            { rank: 8, name: "Imperial College London", country: "GB" },
+            { rank: 9, name: "UC Berkeley", country: "US" },
+            { rank: 10, name: "Yale University", country: "US" },
+            { rank: 11, name: "ETH Zurich", country: "CH" },
+            { rank: 12, name: "Tsinghua University", country: "CN" },
+            { rank: 13, name: "Peking University", country: "CN" },
+            { rank: 14, name: "U of Pennsylvania", country: "US" },
+            { rank: 15, name: "U of Chicago", country: "US" },
+            { rank: 16, name: "Johns Hopkins U", country: "US" },
+            { rank: 17, name: "NUS", country: "SG" },
+            { rank: 18, name: "Cornell University", country: "US" },
+            { rank: 18, name: "UCLA", country: "US" },
+            { rank: 20, name: "Columbia University", country: "US" },
+            { rank: 21, name: "U of Toronto", country: "CA" },
+            { rank: 22, name: "UCL", country: "GB" },
+            { rank: 23, name: "U of Michigan", country: "US" },
+            { rank: 24, name: "Carnegie Mellon U", country: "US" },
+            { rank: 25, name: "U of Washington", country: "US" },
+            { rank: 26, name: "U of Tokyo", country: "JP" },
+            { rank: 27, name: "TU Munich", country: "DE" },
+            { rank: 28, name: "Duke University", country: "US" },
+            { rank: 29, name: "U of Edinburgh", country: "GB" },
+            { rank: 30, name: "Northwestern U", country: "US" },
+            { rank: 31, name: "NTU Singapore", country: "SG" },
+            { rank: 31, name: "NYU", country: "US" },
+            { rank: 33, name: "U of Hong Kong", country: "HK" },
+            { rank: 34, name: "LMU Munich", country: "DE" },
+            { rank: 35, name: "EPFL", country: "CH" },
+            { rank: 36, name: "Fudan University", country: "CN" },
+            { rank: 37, name: "U of Melbourne", country: "AU" },
+            { rank: 38, name: "King's College London", country: "GB" },
+            { rank: 39, name: "Chinese U of HK", country: "HK" },
+            { rank: 40, name: "Karolinska Institute", country: "SE" },
+            { rank: 41, name: "U of British Columbia", country: "CA" },
+            { rank: 42, name: "McGill University", country: "CA" },
+            { rank: 43, name: "UCSD", country: "US" },
+            { rank: 44, name: "Heidelberg U", country: "DE" },
+            { rank: 45, name: "Seoul Nat University", country: "KR" },
+            { rank: 46, name: "U of Sydney", country: "AU" },
+            { rank: 47, name: "Shanghai Jiao Tong U", country: "CN" },
+            { rank: 48, name: "Zhejiang University", country: "CN" },
+            { rank: 49, name: "Georgia Tech", country: "US" },
+            { rank: 50, name: "LSE", country: "GB" },
+          ],
+          // ARWU 2025 - Published June 2025 from shanghairanking.com
+          "ARWU": [
+            { rank: 1, name: "Harvard University", country: "US" },
+            { rank: 2, name: "Stanford University", country: "US" },
+            { rank: 3, name: "MIT", country: "US" },
+            { rank: 4, name: "University of Cambridge", country: "GB" },
+            { rank: 5, name: "UC Berkeley", country: "US" },
+            { rank: 6, name: "University of Oxford", country: "GB" },
+            { rank: 7, name: "Princeton University", country: "US" },
+            { rank: 8, name: "Columbia University", country: "US" },
+            { rank: 9, name: "Caltech", country: "US" },
+            { rank: 10, name: "U of Chicago", country: "US" },
+            { rank: 11, name: "Yale University", country: "US" },
+            { rank: 12, name: "Cornell University", country: "US" },
+            { rank: 13, name: "Paris-Saclay U", country: "FR" },
+            { rank: 14, name: "UCL", country: "GB" },
+            { rank: 14, name: "U of Pennsylvania", country: "US" },
+            { rank: 16, name: "UCLA", country: "US" },
+            { rank: 17, name: "U of Washington", country: "US" },
+            { rank: 18, name: "Tsinghua University", country: "CN" },
+            { rank: 19, name: "Johns Hopkins U", country: "US" },
+            { rank: 20, name: "UCSD", country: "US" },
+            { rank: 21, name: "UCSF", country: "US" },
+            { rank: 22, name: "ETH Zurich", country: "CH" },
+            { rank: 23, name: "Peking University", country: "CN" },
+            { rank: 24, name: "Zhejiang University", country: "CN" },
+            { rank: 25, name: "U of Toronto", country: "CA" },
+            { rank: 26, name: "Imperial College London", country: "GB" },
+            { rank: 26, name: "Washington U StL", country: "US" },
+            { rank: 28, name: "NYU", country: "US" },
+            { rank: 29, name: "Rockefeller U", country: "US" },
+            { rank: 30, name: "Shanghai Jiao Tong U", country: "CN" },
+            { rank: 31, name: "Northwestern U", country: "US" },
+            { rank: 31, name: "U of Tokyo", country: "JP" },
+            { rank: 33, name: "U of Michigan", country: "US" },
+            { rank: 34, name: "PSL University", country: "FR" },
+            { rank: 35, name: "U of Copenhagen", country: "DK" },
+            { rank: 36, name: "U Wisconsin-Madison", country: "US" },
+            { rank: 37, name: "U of Edinburgh", country: "GB" },
+            { rank: 38, name: "U of Melbourne", country: "AU" },
+            { rank: 39, name: "UNC Chapel Hill", country: "US" },
+            { rank: 40, name: "USTC", country: "CN" },
+            { rank: 41, name: "Fudan University", country: "CN" },
+            { rank: 42, name: "LMU Munich", country: "DE" },
+            { rank: 43, name: "Sorbonne University", country: "FR" },
+            { rank: 44, name: "EPFL", country: "CH" },
+            { rank: 45, name: "TU Munich", country: "DE" },
+            { rank: 46, name: "Duke University", country: "US" },
+            { rank: 46, name: "Kyoto University", country: "JP" },
+            { rank: 46, name: "U of Manchester", country: "GB" },
+            { rank: 49, name: "UT Austin", country: "US" },
+            { rank: 50, name: "Karolinska Institute", country: "SE" },
+          ]
+        }
+      }
+    };
+
+    const SOURCES = ["THE", "QS", "ARWU"];
+    const SOURCE_NAMES = { THE: "THE 2026", QS: "QS 2026", ARWU: "ARWU 2025" };
+    const SOURCE_COLORS = {
+      THE: { bg: "from-rose-500 to-pink-600", text: "#f43f5e" },
+      QS: { bg: "from-blue-500 to-indigo-600", text: "#3b82f6" },
+      ARWU: { bg: "from-emerald-500 to-teal-600", text: "#10b981" }
+    };
+
+    // Explicit mapping of university name variations
+    const UNI_GROUPS = {
+      'mit': ['MIT', 'Massachusetts Institute of Technology'],
+      'oxford': ['University of Oxford', 'Oxford'],
+      'cambridge': ['University of Cambridge', 'Cambridge'],
+      'harvard': ['Harvard University', 'Harvard'],
+      'stanford': ['Stanford University', 'Stanford'],
+      'imperial': ['Imperial College London', 'Imperial'],
+      'eth': ['ETH Zurich', 'ETH'],
+      'nus': ['NUS', 'National University of Singapore'],
+      'ucl': ['UCL', 'University College London'],
+      'caltech': ['Caltech', 'California Institute of Technology'],
+      'upenn': ['U of Pennsylvania', 'University of Pennsylvania', 'UPenn'],
+      'berkeley': ['UC Berkeley', 'University of California Berkeley'],
+      'melbourne': ['U of Melbourne', 'University of Melbourne'],
+      'peking': ['Peking University', 'Peking'],
+      'ntu_sg': ['NTU Singapore', 'Nanyang Technological University'],
+      'cornell': ['Cornell University', 'Cornell'],
+      'hku': ['U of Hong Kong', 'University of Hong Kong', 'HKU'],
+      'sydney': ['U of Sydney', 'University of Sydney'],
+      'unsw': ['UNSW Sydney', 'UNSW'],
+      'tsinghua': ['Tsinghua University', 'Tsinghua'],
+      'chicago': ['U of Chicago', 'University of Chicago'],
+      'princeton': ['Princeton University', 'Princeton'],
+      'yale': ['Yale University', 'Yale'],
+      'psl': ['Universite PSL', 'PSL University', 'PSL'],
+      'toronto': ['U of Toronto', 'University of Toronto'],
+      'epfl': ['EPFL', 'Ecole Polytechnique Federale de Lausanne'],
+      'edinburgh': ['U of Edinburgh', 'University of Edinburgh'],
+      'tum': ['TU Munich', 'Technical University of Munich'],
+      'mcgill': ['McGill University', 'McGill'],
+      'anu': ['Australian Nat U', 'Australian National University', 'ANU'],
+      'snu': ['Seoul Nat University', 'Seoul National University', 'SNU'],
+      'hopkins': ['Johns Hopkins U', 'Johns Hopkins University'],
+      'tokyo': ['U of Tokyo', 'University of Tokyo'],
+      'columbia': ['Columbia University', 'Columbia'],
+      'manchester': ['U of Manchester', 'University of Manchester'],
+      'cuhk': ['Chinese U of HK', 'Chinese University of Hong Kong', 'CUHK'],
+      'monash': ['Monash University', 'Monash'],
+      'ubc': ['U of British Columbia', 'University of British Columbia', 'UBC'],
+      'fudan': ['Fudan University', 'Fudan'],
+      'kcl': ['King\'s College London', 'KCL'],
+      'uq': ['U of Queensland', 'University of Queensland'],
+      'ucla': ['UCLA', 'University of California Los Angeles'],
+      'nyu': ['NYU', 'New York University'],
+      'michigan': ['U of Michigan', 'University of Michigan'],
+      'sjtu': ['Shanghai Jiao Tong U', 'Shanghai Jiao Tong University', 'SJTU'],
+      'ip_paris': ['IP Paris', 'Institut Polytechnique de Paris'],
+      'hkust': ['HKUST', 'Hong Kong University of Science and Technology'],
+      'zhejiang': ['Zhejiang University', 'Zhejiang'],
+      'delft': ['Delft University', 'TU Delft'],
+      'kyoto': ['Kyoto University', 'Kyoto'],
+      'duke': ['Duke University', 'Duke'],
+      'northwestern': ['Northwestern U', 'Northwestern University'],
+      'cmu': ['Carnegie Mellon U', 'Carnegie Mellon University', 'CMU'],
+      'washington': ['U of Washington', 'University of Washington'],
+      'lse': ['LSE', 'London School of Economics'],
+      'karolinska': ['Karolinska Institute', 'Karolinska'],
+      'lmu': ['LMU Munich', 'Ludwig Maximilian University'],
+      'georgia_tech': ['Georgia Tech', 'Georgia Institute of Technology'],
+      'ucsd': ['UCSD', 'University of California San Diego'],
+      'heidelberg': ['Heidelberg U', 'Heidelberg University'],
+      'sorbonne': ['Sorbonne University', 'Sorbonne'],
+      'paris_saclay': ['Paris-Saclay U', 'Universite Paris-Saclay'],
+      'ucsf': ['UCSF', 'University of California San Francisco'],
+      'wash_stl': ['Washington U StL', 'Washington University in St. Louis'],
+      'rockefeller': ['Rockefeller U', 'Rockefeller University'],
+      'copenhagen': ['U of Copenhagen', 'University of Copenhagen'],
+      'unc': ['UNC Chapel Hill', 'University of North Carolina'],
+      'wisconsin': ['U Wisconsin-Madison', 'University of Wisconsin-Madison'],
+      'ustc': ['USTC', 'University of Science and Technology of China'],
+      'ut_austin': ['UT Austin', 'University of Texas at Austin'],
+      'yonsei': ['Yonsei University', 'Yonsei'],
+      'minnesota': ['U of Minnesota', 'University of Minnesota'],
+    };
+
+    // Build reverse lookup
+    const NAME_TO_GROUP = {};
+    Object.entries(UNI_GROUPS).forEach(([groupId, names]) => {
+      names.forEach(name => {
+        NAME_TO_GROUP[name.toLowerCase()] = groupId;
+      });
+    });
+
+    const namesMatch = (name1, name2) => {
+      if (name1 === name2) return true;
+      const group1 = NAME_TO_GROUP[name1.toLowerCase()];
+      const group2 = NAME_TO_GROUP[name2.toLowerCase()];
+      if (group1 && group2 && group1 === group2) return true;
+      return false;
+    };
+
+    function App() {
+      const [highlightedUni, setHighlightedUni] = useState(null);
+      const columnRefs = useRef({});
+
+      const data = RANKINGS_DATA["2026"]["overall"];
+
+      const handleMouseEnter = useCallback((name) => {
+        setHighlightedUni(name);
+      }, []);
+
+      const handleMouseLeave = useCallback(() => {
+        setHighlightedUni(null);
+      }, []);
+
+      const isHighlighted = useCallback((name) => {
+        if (!highlightedUni) return false;
+        return namesMatch(name, highlightedUni);
+      }, [highlightedUni]);
+
+      return (
+        <div className="min-h-screen p-4 md:p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-6">
+              <h1 className="title-font text-2xl md:text-3xl font-bold text-white mb-2">
+                World University Rankings - Top 50
+              </h1>
+              <p className="text-slate-400 text-sm">
+                LATEST DATA | QS 2026 | THE 2026 | ARWU 2025
+              </p>
+              <p className="text-slate-500 text-xs mt-1">
+                Sources: topuniversities.com, timeshighereducation.com, shanghairanking.com
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              {SOURCES.map((source) => (
+                <div key={source} className="flex flex-col">
+                  <div className={`bg-gradient-to-r ${SOURCE_COLORS[source].bg} rounded-t-lg px-3 py-2`}>
+                    <h2 className="title-font text-white font-semibold text-center text-sm">
+                      {SOURCE_NAMES[source]}
+                    </h2>
+                  </div>
+                  <div 
+                    ref={el => columnRefs.current[source] = el}
+                    className="bg-slate-800/50 rounded-b-lg border border-slate-700/50"
+                  >
+                    {data[source].map((uni, idx) => (
+                      <div
+                        key={`${source}-${idx}`}
+                        className={`university-card px-2 border-b border-slate-700/30 cursor-pointer
+                          ${isHighlighted(uni.name) ? 'highlighted' : ''}`}
+                        onMouseEnter={() => handleMouseEnter(uni.name)}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        <span 
+                          className="w-6 text-xs font-medium mr-2 flex-shrink-0"
+                          style={{ color: SOURCE_COLORS[source].text }}
+                        >
+                          {uni.rank}
+                        </span>
+                        <span className="text-white text-xs truncate flex-1">
+                          {FLAGS[uni.country] || ''} {uni.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 text-center text-slate-500 text-xs">
+              <p>Hover over any university to highlight across all rankings</p>
+              <p className="mt-1">Tied ranks are shown with same rank number</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
