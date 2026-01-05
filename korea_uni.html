@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>South Korea University Rankings Comparison</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #fff;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .legend-dot.the { background: #f472b6; }
+    .legend-dot.qs { background: #60a5fa; }
+    .legend-dot.arwu { background: #34d399; }
+    .rankings-wrapper {
+      position: relative;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+    .ranking-column {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 16px;
+      width: 320px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .column-header {
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .column-header.the { background: linear-gradient(135deg, #ec4899, #f472b6); }
+    .column-header.qs { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+    .column-header.arwu { background: linear-gradient(135deg, #10b981, #34d399); }
+    .column-header h2 { font-size: 1.1rem; margin-bottom: 2px; }
+    .column-header span { font-size: 0.75rem; opacity: 0.9; }
+    .uni-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .uni-card:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateX(4px);
+    }
+    .uni-card.highlighted {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .uni-card.dimmed { opacity: 0.3; }
+    .kr-rank {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .kr-rank.the { background: rgba(244,114,182,0.3); color: #f472b6; }
+    .kr-rank.qs { background: rgba(96,165,250,0.3); color: #60a5fa; }
+    .kr-rank.arwu { background: rgba(52,211,153,0.3); color: #34d399; }
+    .uni-info { flex: 1; min-width: 0; }
+    .uni-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .global-rank {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 2px;
+    }
+    svg.connections {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      overflow: visible;
+      /* Debug border - remove after fixing */
+      border: 2px solid red;
+    }
+    .connection-line {
+      fill: none;
+      stroke-width: 2;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
+      stroke: #888; /* Fallback color */
+    }
+    .connection-line.highlighted {
+      opacity: 0.9;
+      stroke-width: 3;
+    }
+    .connection-line.dimmed { opacity: 0.05; }
+    .connection-line.the-qs-h { stroke: url(#grad-the-qs-h), #f472b6; }
+    .connection-line.qs-arwu-h { stroke: url(#grad-qs-arwu-h), #34d399; }
+    .connection-line.the-qs-v { stroke: url(#grad-the-qs-v), #f472b6; }
+    .connection-line.qs-arwu-v { stroke: url(#grad-qs-arwu-v), #34d399; }
+    .sources {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: #666;
+    }
+    .sources a { color: #60a5fa; text-decoration: none; }
+    .sources a:hover { text-decoration: underline; }
+    @media (max-width: 1100px) {
+      .rankings-wrapper { flex-direction: column; align-items: center; }
+      .ranking-column { width: 100%; max-width: 400px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>South Korea University Rankings 2025-2026</h1>
+    <p class="subtitle">Korea Rank 1-20 across THE, QS, and ARWU | Hover to trace universities</p>
+    
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot the"></div>THE 2026</div>
+      <div class="legend-item"><div class="legend-dot qs"></div>QS 2026</div>
+      <div class="legend-item"><div class="legend-dot arwu"></div>ARWU 2025</div>
+    </div>
+
+    <div class="rankings-wrapper" id="rankings">
+      <!-- THE Column -->
+      <div class="ranking-column" id="col-the">
+        <div class="column-header the">
+          <h2>THE 2026</h2>
+          <span>Times Higher Education</span>
+        </div>
+        <div class="cards-container" id="the-cards"></div>
+      </div>
+
+      <!-- QS Column -->
+      <div class="ranking-column" id="col-qs">
+        <div class="column-header qs">
+          <h2>QS 2026</h2>
+          <span>Quacquarelli Symonds</span>
+        </div>
+        <div class="cards-container" id="qs-cards"></div>
+      </div>
+
+      <!-- ARWU Column -->
+      <div class="ranking-column" id="col-arwu">
+        <div class="column-header arwu">
+          <h2>ARWU 2025</h2>
+          <span>Shanghai Ranking</span>
+        </div>
+        <div class="cards-container" id="arwu-cards"></div>
+      </div>
+
+      <svg class="connections" id="svg-connections">
+        <defs>
+          <!-- Horizontal gradients -->
+          <linearGradient id="grad-the-qs-h" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#f472b6"/>
+            <stop offset="100%" style="stop-color:#60a5fa"/>
+          </linearGradient>
+          <linearGradient id="grad-qs-arwu-h" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#60a5fa"/>
+            <stop offset="100%" style="stop-color:#34d399"/>
+          </linearGradient>
+          <!-- Vertical gradients -->
+          <linearGradient id="grad-the-qs-v" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#f472b6"/>
+            <stop offset="100%" style="stop-color:#60a5fa"/>
+          </linearGradient>
+          <linearGradient id="grad-qs-arwu-v" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#60a5fa"/>
+            <stop offset="100%" style="stop-color:#34d399"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="sources">
+      Sources: 
+      <a href="https://www.timeshighereducation.com" target="_blank">timeshighereducation.com</a> (Oct 2025) |
+      <a href="https://www.topuniversities.com" target="_blank">topuniversities.com</a> (Jun 2025) |
+      <a href="https://www.shanghairanking.com" target="_blank">shanghairanking.com</a> (Jun 2025)
+    </div>
+  </div>
+
+<script>
+// UPDATED ranking data - Korea Rank 1-20 for each system
+// THE 2026, QS 2026, ARWU 2025 (from shanghairanking.com)
+const DATA = {
+  THE: [
+    { krRank: 1, globalRank: "58", name: "Seoul National University", key: "SNU" },
+    { krRank: 2, globalRank: "70", name: "KAIST", key: "KAIST" },
+    { krRank: 3, globalRank: "86", name: "Yonsei University", key: "Yonsei" },
+    { krRank: 4, globalRank: "87", name: "Sungkyunkwan University", key: "SKKU" },
+    { krRank: 5, globalRank: "141", name: "POSTECH", key: "POSTECH" },
+    { krRank: 6, globalRank: "156", name: "Korea University", key: "Korea" },
+    { krRank: 7, globalRank: "201-250", name: "UNIST", key: "UNIST" },
+    { krRank: 8, globalRank: "251-300", name: "Hanyang University", key: "Hanyang" },
+    { krRank: 9, globalRank: "251-300", name: "Kyung Hee University", key: "KyungHee" },
+    { krRank: 10, globalRank: "251-300", name: "Sejong University", key: "Sejong" },
+    { krRank: 11, globalRank: "351-400", name: "DGIST", key: "DGIST" },
+    { krRank: 12, globalRank: "401-500", name: "Ajou University", key: "Ajou" },
+    { krRank: 13, globalRank: "401-500", name: "Chung-Ang University", key: "ChungAng" },
+    { krRank: 14, globalRank: "401-500", name: "GIST", key: "GIST" },
+    { krRank: 15, globalRank: "501-600", name: "Ewha Womans University", key: "Ewha" },
+    { krRank: 16, globalRank: "501-600", name: "Konkuk University", key: "Konkuk" },
+    { krRank: 17, globalRank: "501-600", name: "Kyungpook National Univ", key: "Kyungpook" },
+    { krRank: 18, globalRank: "501-600", name: "Pusan National University", key: "Pusan" },
+    { krRank: 19, globalRank: "501-600", name: "University of Ulsan", key: "Ulsan" },
+    { krRank: 20, globalRank: "601-800", name: "Catholic Univ of Korea", key: "Catholic" }
+  ],
+  QS: [
+    { krRank: 1, globalRank: "38", name: "Seoul National University", key: "SNU" },
+    { krRank: 2, globalRank: "50", name: "Yonsei University", key: "Yonsei" },
+    { krRank: 3, globalRank: "53", name: "KAIST", key: "KAIST" },
+    { krRank: 4, globalRank: "61", name: "Korea University", key: "Korea" },
+    { krRank: 5, globalRank: "102", name: "POSTECH", key: "POSTECH" },
+    { krRank: 6, globalRank: "123", name: "Sungkyunkwan University", key: "SKKU" },
+    { krRank: 7, globalRank: "164", name: "Hanyang University", key: "Hanyang" },
+    { krRank: 8, globalRank: "217", name: "UNIST", key: "UNIST" },
+    { krRank: 9, globalRank: "292", name: "Kyung Hee University", key: "KyungHee" },
+    { krRank: 10, globalRank: "328", name: "GIST", key: "GIST" },
+    { krRank: 11, globalRank: "362", name: "Ewha Womans University", key: "Ewha" },
+    { krRank: 12, globalRank: "392", name: "Chung-Ang University", key: "ChungAng" },
+    { krRank: 13, globalRank: "436", name: "Sejong University", key: "Sejong" },
+    { krRank: 14, globalRank: "471", name: "Kyungpook National Univ", key: "Kyungpook" },
+    { krRank: 15, globalRank: "494", name: "Pusan National University", key: "Pusan" },
+    { krRank: 16, globalRank: "494", name: "Sogang University", key: "Sogang" },
+    { krRank: 17, globalRank: "551-600", name: "Konkuk University", key: "Konkuk" },
+    { krRank: 18, globalRank: "551-600", name: "Inha University", key: "Inha" },
+    { krRank: 19, globalRank: "551-600", name: "Ajou University", key: "Ajou" },
+    { krRank: 20, globalRank: "601-650", name: "University of Ulsan", key: "Ulsan" }
+  ],
+  // ARWU 2025 - Updated from shanghairanking.com (Published June 2025)
+  // SNU improved from #86 to #81
+  ARWU: [
+    { krRank: 1, globalRank: "81", name: "Seoul National University", key: "SNU" },
+    { krRank: 2, globalRank: "151-200", name: "Sungkyunkwan University", key: "SKKU" },
+    { krRank: 3, globalRank: "151-200", name: "KAIST", key: "KAIST" },
+    { krRank: 4, globalRank: "151-200", name: "Korea University", key: "Korea" },
+    { krRank: 5, globalRank: "151-200", name: "UNIST", key: "UNIST" },
+    { krRank: 6, globalRank: "151-200", name: "Yonsei University", key: "Yonsei" },
+    { krRank: 7, globalRank: "201-300", name: "Hanyang University", key: "Hanyang" },
+    { krRank: 8, globalRank: "201-300", name: "POSTECH", key: "POSTECH" },
+    { krRank: 9, globalRank: "301-400", name: "Kyung Hee University", key: "KyungHee" },
+    { krRank: 10, globalRank: "301-400", name: "Kyungpook National Univ", key: "Kyungpook" },
+    { krRank: 11, globalRank: "301-400", name: "Pusan National University", key: "Pusan" },
+    { krRank: 12, globalRank: "301-400", name: "University of Ulsan", key: "Ulsan" },
+    { krRank: 13, globalRank: "401-500", name: "Chonnam National Univ", key: "Chonnam" },
+    { krRank: 14, globalRank: "401-500", name: "GIST", key: "GIST" },
+    { krRank: 15, globalRank: "401-500", name: "Sejong University", key: "Sejong" },
+    { krRank: 16, globalRank: "401-500", name: "Yeungnam University", key: "Yeungnam" },
+    { krRank: 17, globalRank: "501-600", name: "Ewha Womans University", key: "Ewha" },
+    { krRank: 18, globalRank: "501-600", name: "Inha University", key: "Inha" },
+    { krRank: 19, globalRank: "501-600", name: "Konkuk University", key: "Konkuk" },
+    { krRank: 20, globalRank: "601-700", name: "Ajou University", key: "Ajou" }
+  ]
+};
+
+// Store card elements for connection drawing
+const cardElements = { THE: {}, QS: {}, ARWU: {} };
+
+// Render cards
+function renderCards() {
+  const sources = ['THE', 'QS', 'ARWU'];
+  
+  sources.forEach(source => {
+    const container = document.getElementById(`${source.toLowerCase()}-cards`);
+    container.innerHTML = '';
+    
+    // Reset card storage for this source
+    cardElements[source] = {};
+    
+    DATA[source].forEach((uni) => {
+      const card = document.createElement('div');
+      card.className = 'uni-card';
+      card.dataset.key = uni.key;
+      card.dataset.source = source;
+      
+      card.innerHTML = `
+        <div class="kr-rank ${source.toLowerCase()}">${uni.krRank}</div>
+        <div class="uni-info">
+          <div class="uni-name">${uni.name}</div>
+          <div class="global-rank">Global #${uni.globalRank}</div>
+        </div>
+      `;
+      
+      card.addEventListener('mouseenter', () => highlightUniversity(uni.key));
+      card.addEventListener('mouseleave', () => clearHighlight());
+      
+      container.appendChild(card);
+      
+      // Store reference to card element
+      cardElements[source][uni.key] = card;
+    });
+  });
+}
+
+// Draw connection lines
+function drawConnections() {
+  const svg = document.getElementById('svg-connections');
+  const wrapper = document.getElementById('rankings');
+  
+  // Get wrapper's position for reference
+  const wrapperRect = wrapper.getBoundingClientRect();
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  // Calculate wrapper's absolute position on the page
+  const wrapperLeft = wrapperRect.left + scrollLeft;
+  const wrapperTop = wrapperRect.top + scrollTop;
+  
+  // Set SVG size explicitly
+  const svgWidth = wrapper.offsetWidth;
+  const svgHeight = wrapper.offsetHeight;
+  svg.style.width = svgWidth + 'px';
+  svg.style.height = svgHeight + 'px';
+  svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+  
+  // Detect layout orientation
+  const colThe = document.getElementById('col-the');
+  const colQs = document.getElementById('col-qs');
+  const theRect = colThe.getBoundingClientRect();
+  const qsRect = colQs.getBoundingClientRect();
+  const isVertical = qsRect.top > theRect.bottom - 10;
+  
+  // Clear existing paths
+  svg.querySelectorAll('path').forEach(p => p.remove());
+  
+  const suffix = isVertical ? '-v' : '-h';
+  
+  // Helper function to get element position relative to wrapper
+  function getRelativePos(element) {
+    const rect = element.getBoundingClientRect();
+    const elemLeft = rect.left + scrollLeft;
+    const elemTop = rect.top + scrollTop;
+    return {
+      left: elemLeft - wrapperLeft,
+      top: elemTop - wrapperTop,
+      right: elemLeft - wrapperLeft + rect.width,
+      bottom: elemTop - wrapperTop + rect.height,
+      width: rect.width,
+      height: rect.height,
+      centerX: elemLeft - wrapperLeft + rect.width / 2,
+      centerY: elemTop - wrapperTop + rect.height / 2
+    };
+  }
+  
+  // Draw THE to QS connections
+  DATA.THE.forEach(theUni => {
+    const key = theUni.key;
+    const theCard = cardElements.THE[key];
+    const qsCard = cardElements.QS[key];
+    
+    if (theCard && qsCard) {
+      const fromPos = getRelativePos(theCard);
+      const toPos = getRelativePos(qsCard);
+      
+      // Debug first connection
+      if (key === 'SNU') {
+        console.log('SNU THE->QS coords:', {
+          from: fromPos,
+          to: toPos,
+          isVertical: isVertical
+        });
+      }
+      
+      let d;
+      if (isVertical) {
+        const midY = (fromPos.bottom + toPos.top) / 2;
+        d = `M ${fromPos.centerX} ${fromPos.bottom} C ${fromPos.centerX} ${midY}, ${toPos.centerX} ${midY}, ${toPos.centerX} ${toPos.top}`;
+      } else {
+        const midX = (fromPos.right + toPos.left) / 2;
+        d = `M ${fromPos.right} ${fromPos.centerY} C ${midX} ${fromPos.centerY}, ${midX} ${toPos.centerY}, ${toPos.left} ${toPos.centerY}`;
+      }
+      
+      // Debug first path
+      if (key === 'SNU') {
+        console.log('SNU THE->QS path d:', d);
+      }
+      
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', `connection-line the-qs${suffix}`);
+      path.dataset.key = key;
+      svg.appendChild(path);
+    }
+  });
+  
+  // Draw QS to ARWU connections
+  DATA.QS.forEach(qsUni => {
+    const key = qsUni.key;
+    const qsCard = cardElements.QS[key];
+    const arwuCard = cardElements.ARWU[key];
+    
+    if (qsCard && arwuCard) {
+      const fromPos = getRelativePos(qsCard);
+      const toPos = getRelativePos(arwuCard);
+      
+      let d;
+      if (isVertical) {
+        const midY = (fromPos.bottom + toPos.top) / 2;
+        d = `M ${fromPos.centerX} ${fromPos.bottom} C ${fromPos.centerX} ${midY}, ${toPos.centerX} ${midY}, ${toPos.centerX} ${toPos.top}`;
+      } else {
+        const midX = (fromPos.right + toPos.left) / 2;
+        d = `M ${fromPos.right} ${fromPos.centerY} C ${midX} ${fromPos.centerY}, ${midX} ${toPos.centerY}, ${toPos.left} ${toPos.centerY}`;
+      }
+      
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', `connection-line qs-arwu${suffix}`);
+      path.dataset.key = key;
+      svg.appendChild(path);
+    }
+  });
+  
+  // Log for debugging
+  console.log('Connections drawn. SVG size:', svgWidth, 'x', svgHeight);
+  console.log('Path count:', svg.querySelectorAll('path').length);
+}
+
+// Debug function to check connections
+function debugConnections() {
+  console.log('=== DEBUG CONNECTIONS ===');
+  console.log('THE cards:', Object.keys(cardElements.THE));
+  console.log('QS cards:', Object.keys(cardElements.QS));
+  console.log('ARWU cards:', Object.keys(cardElements.ARWU));
+  
+  // Check SNU specifically
+  console.log('SNU in THE:', cardElements.THE['SNU']);
+  console.log('SNU in QS:', cardElements.QS['SNU']);
+  console.log('SNU in ARWU:', cardElements.ARWU['SNU']);
+  
+  // Check KyungHee
+  console.log('KyungHee in THE:', cardElements.THE['KyungHee']);
+  console.log('KyungHee in QS:', cardElements.QS['KyungHee']);
+  console.log('KyungHee in ARWU:', cardElements.ARWU['KyungHee']);
+}
+
+function highlightUniversity(key) {
+  // Highlight cards
+  document.querySelectorAll('.uni-card').forEach(card => {
+    if (card.dataset.key === key) {
+      card.classList.add('highlighted');
+      card.classList.remove('dimmed');
+    } else {
+      card.classList.add('dimmed');
+      card.classList.remove('highlighted');
+    }
+  });
+  
+  // Highlight lines
+  document.querySelectorAll('.connection-line').forEach(line => {
+    if (line.dataset.key === key) {
+      line.classList.add('highlighted');
+      line.classList.remove('dimmed');
+    } else {
+      line.classList.add('dimmed');
+      line.classList.remove('highlighted');
+    }
+  });
+}
+
+function clearHighlight() {
+  document.querySelectorAll('.uni-card').forEach(card => {
+    card.classList.remove('highlighted', 'dimmed');
+  });
+  document.querySelectorAll('.connection-line').forEach(line => {
+    line.classList.remove('highlighted', 'dimmed');
+  });
+}
+
+// Initialize
+renderCards();
+
+// Draw connections after DOM is fully rendered
+function initConnections() {
+  // Call debug first
+  debugConnections();
+  // Then draw
+  drawConnections();
+}
+
+// Initial draw with delay to ensure layout is complete
+setTimeout(initConnections, 200);
+
+// Redraw on resize
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(drawConnections, 100);
+});
+
+// Redraw on scroll (in case of fixed positioning issues)
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(drawConnections, 50);
+});
+
+// Also redraw when window fully loads (for images, fonts, etc.)
+window.addEventListener('load', () => {
+  setTimeout(drawConnections, 100);
+});
+</script>
+</body>
+</html>
