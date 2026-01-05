@@ -77,6 +77,9 @@
     .nav-icon.korea {
       background: linear-gradient(135deg, #ec4899, #f472b6);
     }
+    .nav-icon.analysis {
+      background: linear-gradient(135deg, #10b981, #34d399);
+    }
     .nav-info {
       flex: 1;
     }
@@ -97,6 +100,21 @@
     .nav-card:hover .nav-arrow {
       transform: translateX(4px);
       color: #888;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: #666;
+      font-size: 0.85rem;
+    }
+    .footer a {
+      color: #888;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      color: #fff;
     }
   </style>
 </head>
@@ -132,7 +150,20 @@
         </div>
         <div class="nav-arrow">-></div>
       </a>
+      
+      <a href="ccel_analysis.html" class="nav-card">
+        <div class="nav-icon analysis">📊</div>
+        <div class="nav-info">
+          <div class="nav-title">CCEL Analysis</div>
+          <div class="nav-desc">CCEL data analysis</div>
+        </div>
+        <div class="nav-arrow">-></div>
+      </a>
     </nav>
+    
+    <div class="footer">
+      Made by Seokhyun Choung with <a href="https://claude.ai" target="_blank">Claude</a>
+    </div>
   </div>
 </body>
 </html>
